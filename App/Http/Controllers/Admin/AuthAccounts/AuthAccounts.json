@@ -1,0 +1,330 @@
+{
+    "title": "회원 관리",
+    "subtitle": "시스템 회원을 관리합니다",
+    "description": "회원 계정 관리 시스템 - 생성, 수정, 삭제, 조회 기능을 제공합니다.",
+    "controllerClass": "\\Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthAccounts\\AuthAccounts",
+    "route": {
+        "name": "admin.auth.accounts",
+        "prefix": "admin/auth/accounts",
+        "actions": {
+            "index": "index",
+            "create": "create",
+            "store": "store",
+            "show": "show",
+            "edit": "edit",
+            "update": "update",
+            "destroy": "destroy"
+        }
+    },
+    "table": {
+        "name": "accounts",
+        "model": "\\Jiny\\Auth\\App\\Models\\Account",
+        "primaryKey": "id",
+        "timestamps": true,
+        "softDeletes": false,
+        "fillable": [
+            "name",
+            "email",
+            "password",
+            "phone",
+            "status",
+            "grade_id",
+            "country_id",
+            "email_verified_at",
+            "last_login_at"
+        ],
+        "guarded": ["id", "created_at", "updated_at"],
+        "hidden": ["password", "remember_token"],
+        "where": {
+            "default": [],
+            "conditions": []
+        },
+        "casts": {
+            "email_verified_at": "datetime",
+            "last_login_at": "datetime",
+            "created_at": "datetime:Y-m-d H:i:s",
+            "updated_at": "datetime:Y-m-d H:i:s"
+        }
+    },
+    "template": {
+        "layout": "jiny-admin::layouts.admin",
+        "index": "jiny-admin::template.index",
+        "show": "jiny-admin::template.show",
+        "create": "jiny-admin::template.create",
+        "edit": "jiny-admin::template.edit"
+    },
+    "index": {
+        "tableLayoutPath": "jiny-admin::template.livewire.admin-table",
+        "tablePath": "jiny-auth::admin.auth_accounts.table",
+        "searchLayoutPath": "jiny-admin::template.livewire.admin-search",
+        "searchFormPath": "jiny-auth::admin.auth_accounts.search",
+        "searchable": [
+            "name",
+            "email",
+            "phone"
+        ],
+        "sortable": [
+            "id",
+            "name",
+            "email",
+            "status",
+            "grade_id",
+            "last_login_at",
+            "created_at",
+            "updated_at"
+        ],
+        "filterable": [
+            "status",
+            "grade_id",
+            "country_id"
+        ],
+        "heading": {
+            "title": "회원 목록",
+            "description": "등록된 회원들의 목록을 관리합니다."
+        },
+        "features": {
+            "enableCreate": true,
+            "enableDelete": true,
+            "enableEdit": true,
+            "enableSearch": true,
+            "enableSort": true,
+            "enablePagination": true,
+            "enableBulkActions": true,
+            "enableExport": false,
+            "enableImport": false,
+            "enableStatusToggle": true,
+            "enableSettingsDrawer": true
+        },
+        "pagination": {
+            "perPage": 20,
+            "options": [10, 20, 50, 100]
+        },
+        "sorting": {
+            "default": "created_at",
+            "direction": "desc"
+        },
+        "search": {
+            "placeholder": "회원 검색 (이름, 이메일, 전화번호)...",
+            "debounce": 300
+        },
+        "filters": {
+            "status": {
+                "label": "상태",
+                "options": {
+                    "": "전체",
+                    "active": "활성",
+                    "inactive": "비활성",
+                    "suspended": "정지"
+                }
+            },
+            "grade_id": {
+                "label": "회원 등급",
+                "options": {
+                    "": "전체"
+                },
+                "dynamic": true,
+                "source": "grades"
+            },
+            "country_id": {
+                "label": "국가",
+                "options": {
+                    "": "전체"
+                },
+                "dynamic": true,
+                "source": "countries"
+            }
+        },
+        "table": {
+            "columns": {
+                "checkbox": {
+                    "visible": true,
+                    "width": "50px"
+                },
+                "id": {
+                    "label": "ID",
+                    "visible": true,
+                    "sortable": true,
+                    "width": "80px"
+                },
+                "name": {
+                    "label": "이름",
+                    "visible": true,
+                    "sortable": true,
+                    "searchable": true
+                },
+                "email": {
+                    "label": "이메일",
+                    "visible": true,
+                    "sortable": true,
+                    "searchable": true
+                },
+                "phone": {
+                    "label": "전화번호",
+                    "visible": true,
+                    "searchable": true,
+                    "responsive": "md"
+                },
+                "status": {
+                    "label": "상태",
+                    "visible": true,
+                    "sortable": true,
+                    "type": "badge",
+                    "colors": {
+                        "active": "green",
+                        "inactive": "gray",
+                        "suspended": "red"
+                    }
+                },
+                "grade_name": {
+                    "label": "등급",
+                    "visible": true,
+                    "responsive": "md"
+                },
+                "country_name": {
+                    "label": "국가",
+                    "visible": true,
+                    "responsive": "lg"
+                },
+                "last_login_at": {
+                    "label": "마지막 로그인",
+                    "visible": true,
+                    "sortable": true,
+                    "responsive": "lg",
+                    "format": "Y-m-d H:i"
+                },
+                "created_at": {
+                    "label": "가입일",
+                    "visible": true,
+                    "sortable": true,
+                    "responsive": "md",
+                    "format": "Y-m-d"
+                },
+                "actions": {
+                    "label": "작업",
+                    "visible": true,
+                    "width": "150px"
+                }
+            }
+        }
+    },
+    "create": {
+        "heading": {
+            "title": "새 회원 등록",
+            "description": "새로운 회원을 시스템에 등록합니다."
+        },
+        "createLayoutPath": "jiny-admin::template.livewire.admin-create",
+        "formPath": "jiny-auth::admin.auth_accounts.create",
+        "formLayout": "vertical",
+        "buttonText": "새 회원 추가",
+        "enableContinueCreate": true,
+        "enableListButton": true,
+        "enableSettingsDrawer": true,
+        "defaults": {
+            "status": "active"
+        }
+    },
+    "edit": {
+        "heading": {
+            "title": "회원 정보 수정",
+            "description": "회원의 정보를 수정합니다."
+        },
+        "enableDelete": true,
+        "enableListButton": true,
+        "enableDetailButton": true,
+        "enableSettingsDrawer": true,
+        "editLayoutPath": "jiny-admin::template.livewire.admin-edit",
+        "formPath": "jiny-auth::admin.auth_accounts.edit",
+        "formLayout": "vertical"
+    },
+    "show": {
+        "heading": {
+            "title": "회원 상세 정보",
+            "description": "회원의 상세 정보를 확인합니다."
+        },
+        "showLayoutPath": "jiny-admin::template.livewire.admin-show",
+        "showPath": "jiny-auth::admin.auth_accounts.show",
+        "enableEdit": true,
+        "enableDelete": true,
+        "enableCreate": true,
+        "enableListButton": true,
+        "enableSettingsDrawer": true,
+        "display": {
+            "datetimeFormat": "Y-m-d H:i:s",
+            "booleanLabels": {
+                "true": "예",
+                "false": "아니오"
+            }
+        }
+    },
+    "destroy": {
+        "enableSoftDelete": true,
+        "enableTransaction": true,
+        "requireConfirmation": true,
+        "confirmation": {
+            "message": "정말로 이 회원을 삭제하시겠습니까? 삭제된 회원은 휴면 계정으로 이동됩니다."
+        },
+        "messages": {
+            "success": "회원이 성공적으로 삭제되었습니다.",
+            "error": "회원 삭제 중 오류가 발생했습니다: %s",
+            "confirmRequired": "삭제 확인이 필요합니다."
+        }
+    },
+    "store": {
+        "enableTransaction": true,
+        "defaults": {
+            "status": "active"
+        },
+        "messages": {
+            "success": "회원이 성공적으로 등록되었습니다.",
+            "error": "회원 등록 중 오류가 발생했습니다.",
+            "continueSuccess": "회원이 등록되었습니다. 계속 추가할 수 있습니다."
+        },
+        "validation": {
+            "rules": {
+                "name": "required|string|max:255",
+                "email": "required|email|unique:accounts,email",
+                "password": "required|string|min:8|confirmed",
+                "phone": "nullable|string|max:20",
+                "status": "required|in:active,inactive,suspended",
+                "grade_id": "nullable|exists:grades,id",
+                "country_id": "nullable|exists:countries,id"
+            },
+            "messages": {
+                "name.required": "이름은 필수 입력 항목입니다.",
+                "email.required": "이메일은 필수 입력 항목입니다.",
+                "email.unique": "이미 등록된 이메일 주소입니다.",
+                "password.required": "비밀번호는 필수 입력 항목입니다.",
+                "password.min": "비밀번호는 최소 8자 이상이어야 합니다.",
+                "password.confirmed": "비밀번호 확인이 일치하지 않습니다."
+            }
+        }
+    },
+    "update": {
+        "enableTransaction": true,
+        "trackChanges": true,
+        "redirects": {
+            "success": "show",
+            "error": "edit"
+        },
+        "messages": {
+            "success": "회원 정보가 성공적으로 수정되었습니다.",
+            "error": "회원 정보 수정 중 오류가 발생했습니다."
+        },
+        "validation": {
+            "rules": {
+                "name": "required|string|max:255",
+                "email": "required|email",
+                "password": "nullable|string|min:8|confirmed",
+                "phone": "nullable|string|max:20",
+                "status": "required|in:active,inactive,suspended",
+                "grade_id": "nullable|exists:grades,id",
+                "country_id": "nullable|exists:countries,id"
+            },
+            "messages": {
+                "name.required": "이름은 필수 입력 항목입니다.",
+                "email.required": "이메일은 필수 입력 항목입니다.",
+                "password.min": "비밀번호는 최소 8자 이상이어야 합니다."
+            }
+        }
+    }
+}

@@ -1,0 +1,291 @@
+{
+    "title": "블랙리스트 관리",
+    "description": "차단된 사용자, 이메일, IP 관리",
+    "model": "Jiny\\Auth\\App\\Models\\Blacklist",
+    "table": "blacklists",
+    "primaryKey": "id",
+    "perPage": 20,
+    "controllerClass": "Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthBlacklist\\AuthBlacklist",
+    "searchable": ["type", "value", "reason", "description"],
+    "sortable": ["type", "value", "reason", "hit_count", "created_at", "expires_at"],
+    "sortDefault": {
+        "field": "created_at",
+        "direction": "desc"
+    },
+    "fields": {
+        "type": {
+            "label": "차단 유형",
+            "type": "select",
+            "options": {
+                "email": "이메일",
+                "ip": "IP 주소",
+                "phone": "전화번호",
+                "domain": "도메인",
+                "user_agent": "User Agent",
+                "account": "계정"
+            },
+            "required": true,
+            "searchable": true,
+            "sortable": true,
+            "showInList": true,
+            "showInForm": true
+        },
+        "value": {
+            "label": "차단 대상",
+            "type": "text",
+            "required": true,
+            "placeholder": "이메일, IP, 사용자ID, 전화번호 등",
+            "searchable": true,
+            "sortable": true,
+            "showInList": true,
+            "showInForm": true,
+            "validation": "required|max:255"
+        },
+        "reason": {
+            "label": "차단 사유",
+            "type": "text",
+            "required": true,
+            "placeholder": "차단 사유를 간단히 입력하세요",
+            "searchable": true,
+            "sortable": true,
+            "showInList": true,
+            "showInForm": true,
+            "validation": "required|max:255"
+        },
+        "description": {
+            "label": "상세 설명",
+            "type": "textarea",
+            "rows": 3,
+            "placeholder": "차단에 대한 상세 설명 (선택사항)",
+            "searchable": true,
+            "showInList": false,
+            "showInForm": true
+        },
+        "added_by": {
+            "label": "차단자 ID",
+            "type": "hidden",
+            "showInList": false,
+            "showInForm": false
+        },
+        "blocked_by_name": {
+            "label": "차단자",
+            "type": "text",
+            "readonly": true,
+            "showInList": true,
+            "showInForm": false,
+            "virtual": true
+        },
+        "expires_at": {
+            "label": "만료 일시",
+            "type": "datetime",
+            "showInList": true,
+            "showInForm": true,
+            "sortable": true,
+            "format": "Y-m-d H:i:s"
+        },
+        "is_permanent": {
+            "label": "영구 차단",
+            "type": "boolean",
+            "default": false,
+            "showInList": true,
+            "showInForm": true,
+            "virtual": true
+        },
+        "is_active": {
+            "label": "활성화",
+            "type": "boolean",
+            "default": true,
+            "showInList": true,
+            "showInForm": true,
+            "sortable": true
+        },
+        "hit_count": {
+            "label": "차단 횟수",
+            "type": "number",
+            "default": 0,
+            "showInList": true,
+            "showInForm": false,
+            "sortable": true,
+            "readonly": true
+        },
+        "last_hit_at": {
+            "label": "마지막 차단",
+            "type": "datetime",
+            "showInList": true,
+            "showInForm": false,
+            "sortable": true,
+            "readonly": true,
+            "format": "Y-m-d H:i:s"
+        },
+        "meta": {
+            "label": "추가 정보",
+            "type": "json",
+            "showInList": false,
+            "showInForm": false
+        },
+        "created_at": {
+            "label": "등록일",
+            "type": "datetime",
+            "showInList": true,
+            "showInForm": false,
+            "sortable": true,
+            "format": "Y-m-d H:i:s"
+        },
+        "updated_at": {
+            "label": "수정일",
+            "type": "datetime",
+            "showInList": false,
+            "showInForm": false,
+            "format": "Y-m-d H:i:s"
+        }
+    },
+    "list": {
+        "columns": [
+            "id",
+            "type",
+            "value",
+            "reason",
+            "blocked_by_name",
+            "hit_count",
+            "is_active",
+            "expires_at",
+            "created_at"
+        ],
+        "actions": {
+            "view": {
+                "enabled": true,
+                "icon": "eye",
+                "label": "보기",
+                "class": "text-blue-600"
+            },
+            "edit": {
+                "enabled": true,
+                "icon": "edit",
+                "label": "수정",
+                "class": "text-green-600"
+            },
+            "delete": {
+                "enabled": true,
+                "icon": "trash",
+                "label": "삭제",
+                "class": "text-red-600",
+                "confirm": true
+            },
+            "test": {
+                "enabled": true,
+                "icon": "play",
+                "label": "테스트",
+                "class": "text-purple-600",
+                "custom": true
+            }
+        },
+        "bulk_actions": {
+            "deactivate": {
+                "label": "선택 비활성화",
+                "icon": "ban",
+                "class": "btn-warning"
+            },
+            "activate": {
+                "label": "선택 활성화",
+                "icon": "check",
+                "class": "btn-success"
+            },
+            "delete": {
+                "label": "선택 삭제",
+                "icon": "trash",
+                "class": "btn-danger",
+                "confirm": true
+            }
+        },
+        "filters": {
+            "type": {
+                "label": "차단 유형",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "email": "이메일",
+                    "ip": "IP 주소",
+                    "phone": "전화번호",
+                    "domain": "도메인",
+                    "user_agent": "User Agent",
+                    "account": "계정"
+                }
+            },
+            "is_active": {
+                "label": "상태",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "1": "활성",
+                    "0": "비활성"
+                }
+            },
+            "is_permanent": {
+                "label": "차단 기간",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "1": "영구 차단",
+                    "0": "임시 차단"
+                }
+            }
+        }
+    },
+    "form": {
+        "layout": "two-column",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["type", "value", "reason", "description"],
+                "column": "left"
+            },
+            "settings": {
+                "title": "차단 설정",
+                "fields": ["is_active", "is_permanent", "expires_at"],
+                "column": "right"
+            }
+        },
+        "validation": {
+            "type": "required|in:email,ip,phone,domain,user_agent,account",
+            "value": "required|max:255",
+            "reason": "required|max:255",
+            "description": "nullable|max:1000",
+            "expires_at": "nullable|date|after:now"
+        }
+    },
+    "messages": {
+        "created": "블랙리스트 항목이 추가되었습니다.",
+        "updated": "블랙리스트 항목이 수정되었습니다.",
+        "deleted": "블랙리스트 항목이 삭제되었습니다.",
+        "deactivated": "블랙리스트 항목이 비활성화되었습니다.",
+        "activated": "블랙리스트 항목이 활성화되었습니다.",
+        "error": "처리 중 오류가 발생했습니다.",
+        "not_found": "블랙리스트 항목을 찾을 수 없습니다.",
+        "duplicate": "이미 등록된 항목입니다.",
+        "test_success": "차단이 정상적으로 작동합니다.",
+        "test_failed": "차단이 작동하지 않습니다."
+    },
+    "permissions": {
+        "view": "auth.blacklist.view",
+        "create": "auth.blacklist.create",
+        "edit": "auth.blacklist.edit",
+        "delete": "auth.blacklist.delete",
+        "bulk": "auth.blacklist.bulk"
+    },
+    "features": {
+        "search": true,
+        "sort": true,
+        "filter": true,
+        "pagination": true,
+        "bulk_actions": true,
+        "export": true,
+        "import": true,
+        "audit_log": true,
+        "soft_delete": false,
+        "versioning": false
+    },
+    "export": {
+        "formats": ["csv", "excel", "pdf"],
+        "fields": ["id", "type", "value", "reason", "hit_count", "is_active", "expires_at", "created_at"]
+    }
+}

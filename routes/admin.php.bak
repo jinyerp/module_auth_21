@@ -1,0 +1,149 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccounts\AuthAccounts;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccounts\AuthAccountsCreate;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccounts\AuthAccountsEdit;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccounts\AuthAccountsDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccounts\AuthAccountsShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccountLogs\AuthAccountLogs;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccountLogs\AuthAccountLogsShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthAccountLogs\AuthAccountLogsDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthLoginHistory\AuthLoginHistory;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthLoginHistory\AuthLoginHistoryShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthLoginHistory\AuthLoginHistoryDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\PasswordPolicyController;
+use Jiny\Auth\App\Http\Controllers\Admin\AccountStatusController;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthRoles\AuthRoles;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthRoles\AuthRolesCreate;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthRoles\AuthRolesEdit;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthRoles\AuthRolesDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthRoles\AuthRolesShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthGrades\AuthGrades;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthGrades\AuthGradesCreate;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthGrades\AuthGradesEdit;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthGrades\AuthGradesDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthGrades\AuthGradesShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthTwoFactor\AuthTwoFactor;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthTwoFactor\AuthTwoFactorEdit;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthTwoFactor\AuthTwoFactorDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthTwoFactor\AuthTwoFactorShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthBlacklist\AuthBlacklist;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthBlacklist\AuthBlacklistCreate;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthBlacklist\AuthBlacklistEdit;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthBlacklist\AuthBlacklistDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthBlacklist\AuthBlacklistShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthDormant\AuthDormant;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthDormant\AuthDormantCreate;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthDormant\AuthDormantEdit;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthDormant\AuthDormantDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthDormant\AuthDormantShow;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthCountries\AuthCountries;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthCountries\AuthCountriesCreate;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthCountries\AuthCountriesEdit;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthCountries\AuthCountriesDelete;
+use Jiny\Auth\App\Http\Controllers\Admin\AuthCountries\AuthCountriesShow;
+
+/**
+ * 관리자 인증 관련 라우트
+ * Prefix: /admin/auth
+ * Middleware: ['web', 'auth', 'admin']
+ */
+
+// 관리자 인증 대시보드
+Route::prefix('admin/auth')->middleware(['web', 'auth'])->group(function () {
+    
+    // 대시보드
+    Route::get('/', function() {
+        return view('jiny-auth::admin.dashboard');
+    })->name('admin.auth.dashboard');
+    
+    // 회원 관리 (Accounts)
+    Route::get('/accounts', [AuthAccounts::class, 'index'])->name('admin.auth.accounts');
+    Route::get('/accounts/create', [AuthAccountsCreate::class, 'index'])->name('admin.auth.accounts.create');
+    Route::get('/accounts/{id}', [AuthAccountsShow::class, 'index'])->name('admin.auth.accounts.show');
+    Route::get('/accounts/{id}/edit', [AuthAccountsEdit::class, 'index'])->name('admin.auth.accounts.edit');
+    Route::get('/accounts/{id}/delete', [AuthAccountsDelete::class, 'index'])->name('admin.auth.accounts.delete');
+    
+    // 회원 로그 (Account Logs)
+    Route::get('/account-logs', [AuthAccountLogs::class, 'index'])->name('admin.auth.account_logs');
+    Route::get('/account-logs/{id}', [AuthAccountLogsShow::class, 'index'])->name('admin.auth.account_logs.show');
+    Route::get('/account-logs/{id}/delete', [AuthAccountLogsDelete::class, 'index'])->name('admin.auth.account_logs.delete');
+    
+    // 로그인 기록 (Login History)
+    Route::get('/login-history', [AuthLoginHistory::class, 'index'])->name('admin.auth.login_history');
+    Route::get('/login-history/{id}', [AuthLoginHistoryShow::class, 'index'])->name('admin.auth.login_history.show');
+    Route::get('/login-history/{id}/delete', [AuthLoginHistoryDelete::class, 'index'])->name('admin.auth.login_history.delete');
+    
+    // 비밀번호 정책 관리
+    Route::get('/passwords/policy', [PasswordPolicyController::class, 'index'])->name('admin.auth.passwords.policy');
+    Route::post('/passwords/policy', [PasswordPolicyController::class, 'update'])->name('admin.auth.passwords.policy.update');
+    Route::get('/passwords/expired', [PasswordPolicyController::class, 'expired'])->name('admin.auth.passwords.expired');
+    Route::post('/passwords/force-change', [PasswordPolicyController::class, 'forceChange'])->name('admin.auth.passwords.force-change');
+    Route::get('/passwords/statistics', [PasswordPolicyController::class, 'statistics'])->name('admin.auth.passwords.statistics');
+    
+    // 계정 상태 관리
+    Route::post('/users/{id}/activate', [AccountStatusController::class, 'activate'])->name('admin.auth.users.activate');
+    Route::post('/users/{id}/deactivate', [AccountStatusController::class, 'deactivate'])->name('admin.auth.users.deactivate');
+    Route::post('/users/{id}/suspend', [AccountStatusController::class, 'suspend'])->name('admin.auth.users.suspend');
+    Route::post('/users/{id}/unsuspend', [AccountStatusController::class, 'unsuspend'])->name('admin.auth.users.unsuspend');
+    Route::post('/users/bulk-status', [AccountStatusController::class, 'bulkStatusChange'])->name('admin.auth.users.bulk-status');
+    
+    // 역할 관리 (Roles)
+    Route::get('/roles', [AuthRoles::class, 'index'])->name('admin.auth.roles');
+    Route::get('/roles/create', [AuthRolesCreate::class, 'index'])->name('admin.auth.roles.create');
+    Route::get('/roles/{id}', [AuthRolesShow::class, 'index'])->name('admin.auth.roles.show');
+    Route::get('/roles/{id}/edit', [AuthRolesEdit::class, 'index'])->name('admin.auth.roles.edit');
+    Route::get('/roles/{id}/delete', [AuthRolesDelete::class, 'index'])->name('admin.auth.roles.delete');
+    
+    // 회원 등급 (Grades)
+    Route::get('/grades', [AuthGrades::class, 'index'])->name('admin.auth.grades');
+    Route::get('/grades/create', [AuthGradesCreate::class, 'index'])->name('admin.auth.grades.create');
+    Route::get('/grades/{id}', [AuthGradesShow::class, 'index'])->name('admin.auth.grades.show');
+    Route::get('/grades/{id}/edit', [AuthGradesEdit::class, 'index'])->name('admin.auth.grades.edit');
+    Route::get('/grades/{id}/delete', [AuthGradesDelete::class, 'index'])->name('admin.auth.grades.delete');
+    
+    // 2단계 인증 (Two Factor Auth)
+    Route::get('/two-factor', [AuthTwoFactor::class, 'index'])->name('admin.auth.two_factor');
+    Route::get('/two-factor/{id}', [AuthTwoFactorShow::class, 'index'])->name('admin.auth.two_factor.show');
+    Route::get('/two-factor/{id}/edit', [AuthTwoFactorEdit::class, 'index'])->name('admin.auth.two_factor.edit');
+    Route::get('/two-factor/{id}/disable', [AuthTwoFactorDelete::class, 'index'])->name('admin.auth.two_factor.disable');
+    Route::post('/two-factor/{id}/reset-codes', [AuthTwoFactorEdit::class, 'resetRecoveryCodes'])->name('admin.auth.two_factor.reset_codes');
+    Route::post('/two-factor/bulk-disable', [AuthTwoFactor::class, 'bulkDisable'])->name('admin.auth.two_factor.bulk_disable');
+    
+    // 블랙리스트 (Blacklist)
+    Route::get('/blacklist', [AuthBlacklist::class, 'index'])->name('admin.auth.blacklist');
+    Route::get('/blacklist/create', [AuthBlacklistCreate::class, 'index'])->name('admin.auth.blacklist.create');
+    Route::get('/blacklist/whitelist', [AuthBlacklist::class, 'whitelist'])->name('admin.auth.blacklist.whitelist');
+    Route::get('/blacklist/{id}', [AuthBlacklistShow::class, 'index'])->name('admin.auth.blacklist.show');
+    Route::get('/blacklist/{id}/edit', [AuthBlacklistEdit::class, 'index'])->name('admin.auth.blacklist.edit');
+    Route::get('/blacklist/{id}/delete', [AuthBlacklistDelete::class, 'index'])->name('admin.auth.blacklist.delete');
+    Route::post('/blacklist/bulk-add', [AuthBlacklist::class, 'bulkAdd'])->name('admin.auth.blacklist.bulk_add');
+    Route::post('/blacklist/bulk-remove', [AuthBlacklist::class, 'bulkRemove'])->name('admin.auth.blacklist.bulk_remove');
+    Route::post('/blacklist/check', [AuthBlacklist::class, 'check'])->name('admin.auth.blacklist.check');
+    
+    // 휴면계정 (Dormant Accounts)
+    Route::get('/dormant', [AuthDormant::class, 'index'])->name('admin.auth.dormant');
+    Route::get('/dormant/statistics', [AuthDormant::class, 'statistics'])->name('admin.auth.dormant.statistics');
+    Route::get('/dormant/settings', [AuthDormant::class, 'settings'])->name('admin.auth.dormant.settings');
+    Route::post('/dormant/settings', [AuthDormant::class, 'updateSettings'])->name('admin.auth.dormant.settings.update');
+    Route::get('/dormant/create', [AuthDormantCreate::class, 'index'])->name('admin.auth.dormant.create');
+    Route::get('/dormant/{id}', [AuthDormantShow::class, 'index'])->name('admin.auth.dormant.show');
+    Route::get('/dormant/{id}/edit', [AuthDormantEdit::class, 'index'])->name('admin.auth.dormant.edit');
+    Route::get('/dormant/{id}/activate', [AuthDormantDelete::class, 'index'])->name('admin.auth.dormant.activate');
+    Route::post('/dormant/bulk-activate', [AuthDormant::class, 'bulkActivate'])->name('admin.auth.dormant.bulk_activate');
+    Route::post('/dormant/bulk-delete', [AuthDormant::class, 'bulkDelete'])->name('admin.auth.dormant.bulk_delete');
+    Route::post('/dormant/send-notification', [AuthDormant::class, 'sendNotification'])->name('admin.auth.dormant.send_notification');
+    
+    // 국가 관리 (Countries)
+    Route::get('/countries', [AuthCountries::class, 'index'])->name('admin.auth.countries');
+    Route::get('/countries/create', [AuthCountriesCreate::class, 'index'])->name('admin.auth.countries.create');
+    Route::get('/countries/statistics', [AuthCountries::class, 'statistics'])->name('admin.auth.countries.statistics');
+    Route::get('/countries/{id}', [AuthCountriesShow::class, 'index'])->name('admin.auth.countries.show');
+    Route::get('/countries/{id}/edit', [AuthCountriesEdit::class, 'index'])->name('admin.auth.countries.edit');
+    Route::get('/countries/{id}/delete', [AuthCountriesDelete::class, 'index'])->name('admin.auth.countries.delete');
+    Route::post('/countries/import', [AuthCountries::class, 'import'])->name('admin.auth.countries.import');
+    Route::post('/countries/export', [AuthCountries::class, 'export'])->name('admin.auth.countries.export');
+    Route::post('/countries/bulk-toggle', [AuthCountries::class, 'bulkToggle'])->name('admin.auth.countries.bulk_toggle');
+    Route::post('/countries/{id}/toggle', [AuthCountriesShow::class, 'toggleStatus'])->name('admin.auth.countries.toggle');
+});

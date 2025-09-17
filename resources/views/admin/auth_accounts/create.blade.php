@@ -1,0 +1,191 @@
+{{--
+    AuthAccounts 생성 폼 뷰
+    Tailwind CSS 스타일 적용 및 Livewire 기능 통합
+--}}
+<div class="space-y-6">
+    {{-- 기본 정보 섹션 --}}
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">기본 정보</h3>
+            
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {{-- 이름 --}}
+                <div>
+                    <label for="name" class="block text-xs font-medium text-gray-700 mb-1">
+                        이름 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           wire:model.live="form.name"
+                           id="name"
+                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.name') border-red-300 @enderror"
+                           placeholder="회원 이름을 입력하세요">
+                    @error('form.name')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- 이메일 --}}
+                <div>
+                    <label for="email" class="block text-xs font-medium text-gray-700 mb-1">
+                        이메일 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email"
+                           wire:model.live="form.email"
+                           id="email"
+                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.email') border-red-300 @enderror"
+                           placeholder="email@example.com">
+                    @error('form.email')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- 전화번호 --}}
+                <div>
+                    <label for="phone" class="block text-xs font-medium text-gray-700 mb-1">
+                        전화번호
+                    </label>
+                    <input type="text"
+                           wire:model.live="form.phone"
+                           id="phone"
+                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.phone') border-red-300 @enderror"
+                           placeholder="010-0000-0000">
+                    @error('form.phone')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- 상태 --}}
+                <div>
+                    <label for="status" class="block text-xs font-medium text-gray-700 mb-1">
+                        상태 <span class="text-red-500">*</span>
+                    </label>
+                    <select wire:model.live="form.status"
+                            id="status"
+                            class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.status') border-red-300 @enderror">
+                        <option value="active">활성</option>
+                        <option value="inactive">비활성</option>
+                        <option value="suspended">정지</option>
+                    </select>
+                    @error('form.status')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 보안 정보 섹션 --}}
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">보안 정보</h3>
+            
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {{-- 비밀번호 --}}
+                <div>
+                    <label for="password" class="block text-xs font-medium text-gray-700 mb-1">
+                        비밀번호 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password"
+                           wire:model.live="form.password"
+                           id="password"
+                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.password') border-red-300 @enderror"
+                           placeholder="최소 8자 이상">
+                    @error('form.password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- 비밀번호 확인 --}}
+                <div>
+                    <label for="password_confirmation" class="block text-xs font-medium text-gray-700 mb-1">
+                        비밀번호 확인 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password"
+                           wire:model.live="form.password_confirmation"
+                           id="password_confirmation"
+                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.password_confirmation') border-red-300 @enderror"
+                           placeholder="비밀번호 재입력">
+                    @error('form.password_confirmation')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            {{-- 비밀번호 요구사항 --}}
+            <div class="mt-4 p-3 bg-gray-50 rounded-md">
+                <p class="text-xs text-gray-600">비밀번호 요구사항:</p>
+                <ul class="mt-1 text-xs text-gray-500 list-disc list-inside">
+                    <li>최소 8자 이상</li>
+                    <li>대문자, 소문자, 숫자, 특수문자 중 3가지 이상 포함</li>
+                    <li>사용자 정보(이름, 이메일)와 유사하지 않아야 함</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {{-- 추가 정보 섹션 --}}
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">추가 정보</h3>
+            
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {{-- 회원 등급 --}}
+                <div>
+                    <label for="grade_id" class="block text-xs font-medium text-gray-700 mb-1">
+                        회원 등급
+                    </label>
+                    <select wire:model.live="form.grade_id"
+                            id="grade_id"
+                            class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.grade_id') border-red-300 @enderror">
+                        <option value="">선택하세요</option>
+                        @if(isset($grades))
+                            @foreach($grades as $grade)
+                                <option value="{{ $grade->id }}">{{ $grade->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('form.grade_id')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- 국가 --}}
+                <div>
+                    <label for="country_id" class="block text-xs font-medium text-gray-700 mb-1">
+                        국가
+                    </label>
+                    <select wire:model.live="form.country_id"
+                            id="country_id"
+                            class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 @error('form.country_id') border-red-300 @enderror">
+                        <option value="">선택하세요</option>
+                        @if(isset($countries))
+                            @foreach($countries as $country)
+                                <option value="{{ $country->id }}">{{ $country->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('form.country_id')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 계속 생성 옵션 --}}
+    @if($jsonData['create']['enableContinueCreate'] ?? false)
+        <div class="bg-white shadow sm:rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="flex items-center">
+                    <input type="checkbox"
+                           wire:model="continue_creating"
+                           id="continue_creating"
+                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="continue_creating" class="ml-2 block text-xs text-gray-900">
+                        저장 후 계속 추가하기
+                    </label>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>

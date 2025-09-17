@@ -1,0 +1,336 @@
+{
+    "title": "역할 관리",
+    "description": "사용자 역할 및 권한 관리",
+    "controllerClass": "Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthRoles\\AuthRoles",
+    
+    "model": "Jiny\\Auth\\App\\Models\\Role",
+    "table": {
+        "name": "accounts_roles",
+        "primaryKey": "id",
+        "timestamps": true,
+        "softDeletes": false
+    },
+    
+    "route": {
+        "name": "admin.auth.roles",
+        "prefix": "admin/auth/roles",
+        "middleware": ["web", "auth", "admin"]
+    },
+    
+    "template": {
+        "index": "jiny-admin::crud.index",
+        "create": "jiny-admin::crud.create",
+        "edit": "jiny-admin::crud.edit",
+        "show": "jiny-admin::crud.show",
+        "delete": "jiny-admin::crud.delete",
+        "table": "jiny-auth::admin.auth_roles.table",
+        "form_create": "jiny-auth::admin.auth_roles.create",
+        "form_edit": "jiny-auth::admin.auth_roles.edit",
+        "detail": "jiny-auth::admin.auth_roles.show",
+        "search": "jiny-auth::admin.auth_roles.search"
+    },
+    
+    "index": {
+        "title": "역할 목록",
+        "breadcrumb": [
+            {"label": "대시보드", "route": "admin.dashboard"},
+            {"label": "인증", "route": "admin.auth"},
+            {"label": "역할 관리"}
+        ],
+        "actions": {
+            "create": {
+                "enabled": true,
+                "label": "새 역할 추가",
+                "route": "admin.auth.roles.create"
+            }
+        },
+        "perPage": 20,
+        "perPageOptions": [10, 20, 50, 100],
+        "searchable": ["name", "slug", "description"],
+        "sortable": ["name", "slug", "created_at"],
+        "defaultSort": {
+            "field": "name",
+            "direction": "asc"
+        },
+        "filters": {
+            "is_active": {
+                "label": "상태",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "1": "활성",
+                    "0": "비활성"
+                }
+            }
+        },
+        "columns": {
+            "id": {
+                "label": "ID",
+                "width": "60px",
+                "sortable": true
+            },
+            "name": {
+                "label": "역할명",
+                "sortable": true,
+                "searchable": true
+            },
+            "slug": {
+                "label": "슬러그",
+                "sortable": true,
+                "searchable": true
+            },
+            "description": {
+                "label": "설명",
+                "searchable": true
+            },
+            "is_active": {
+                "label": "상태",
+                "type": "badge",
+                "align": "center",
+                "width": "100px"
+            },
+            "created_at": {
+                "label": "생성일",
+                "type": "datetime",
+                "format": "Y-m-d H:i",
+                "sortable": true,
+                "width": "150px"
+            }
+        },
+        "actions": {
+            "view": {
+                "enabled": true,
+                "label": "보기",
+                "route": "admin.auth.roles.show",
+                "icon": "eye"
+            },
+            "edit": {
+                "enabled": true,
+                "label": "수정",
+                "route": "admin.auth.roles.edit",
+                "icon": "pencil"
+            },
+            "delete": {
+                "enabled": true,
+                "label": "삭제",
+                "route": "admin.auth.roles.delete",
+                "icon": "trash",
+                "confirm": true
+            }
+        },
+        "bulkActions": {
+            "delete": {
+                "label": "선택 삭제",
+                "confirm": "선택한 항목을 삭제하시겠습니까?"
+            },
+            "activate": {
+                "label": "활성화"
+            },
+            "deactivate": {
+                "label": "비활성화"
+            }
+        }
+    },
+    
+    "create": {
+        "title": "새 역할 추가",
+        "breadcrumb": [
+            {"label": "대시보드", "route": "admin.dashboard"},
+            {"label": "인증", "route": "admin.auth"},
+            {"label": "역할 관리", "route": "admin.auth.roles"},
+            {"label": "새 역할"}
+        ],
+        "fields": {
+            "name": {
+                "label": "역할명",
+                "type": "text",
+                "required": true,
+                "placeholder": "예: 관리자, 편집자, 사용자"
+            },
+            "slug": {
+                "label": "슬러그",
+                "type": "text",
+                "required": true,
+                "placeholder": "예: admin, editor, user",
+                "hint": "URL에 사용되는 고유 식별자입니다."
+            },
+            "description": {
+                "label": "설명",
+                "type": "textarea",
+                "rows": 3,
+                "placeholder": "역할에 대한 설명을 입력하세요."
+            },
+            "permissions": {
+                "label": "권한",
+                "type": "json",
+                "hint": "JSON 형식으로 권한을 정의합니다.",
+                "placeholder": "{\"read\": true, \"write\": false}"
+            },
+            "is_active": {
+                "label": "활성화",
+                "type": "checkbox",
+                "default": true
+            }
+        },
+        "validation": {
+            "name": "required|string|max:255",
+            "slug": "required|string|max:255|unique:accounts_roles,slug",
+            "description": "nullable|string",
+            "permissions": "nullable|json",
+            "is_active": "boolean"
+        },
+        "buttons": {
+            "save": {
+                "label": "저장",
+                "class": "btn-primary"
+            },
+            "saveAndNew": {
+                "label": "저장 후 새로 만들기",
+                "class": "btn-secondary"
+            },
+            "cancel": {
+                "label": "취소",
+                "route": "admin.auth.roles"
+            }
+        }
+    },
+    
+    "edit": {
+        "title": "역할 수정",
+        "breadcrumb": [
+            {"label": "대시보드", "route": "admin.dashboard"},
+            {"label": "인증", "route": "admin.auth"},
+            {"label": "역할 관리", "route": "admin.auth.roles"},
+            {"label": "수정"}
+        ],
+        "fields": {
+            "name": {
+                "label": "역할명",
+                "type": "text",
+                "required": true
+            },
+            "slug": {
+                "label": "슬러그",
+                "type": "text",
+                "required": true,
+                "hint": "변경 시 주의하세요. 시스템 역할은 변경할 수 없습니다."
+            },
+            "description": {
+                "label": "설명",
+                "type": "textarea",
+                "rows": 3
+            },
+            "permissions": {
+                "label": "권한",
+                "type": "json",
+                "hint": "JSON 형식으로 권한을 정의합니다."
+            },
+            "is_active": {
+                "label": "활성화",
+                "type": "checkbox"
+            }
+        },
+        "validation": {
+            "name": "required|string|max:255",
+            "slug": "required|string|max:255|unique:accounts_roles,slug,{id}",
+            "description": "nullable|string",
+            "permissions": "nullable|json",
+            "is_active": "boolean"
+        },
+        "buttons": {
+            "save": {
+                "label": "저장",
+                "class": "btn-primary"
+            },
+            "saveAndContinue": {
+                "label": "저장 후 계속 편집",
+                "class": "btn-secondary"
+            },
+            "cancel": {
+                "label": "취소",
+                "route": "admin.auth.roles"
+            }
+        }
+    },
+    
+    "show": {
+        "title": "역할 상세",
+        "breadcrumb": [
+            {"label": "대시보드", "route": "admin.dashboard"},
+            {"label": "인증", "route": "admin.auth"},
+            {"label": "역할 관리", "route": "admin.auth.roles"},
+            {"label": "상세"}
+        ],
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["id", "name", "slug", "description", "is_active"]
+            },
+            "permissions": {
+                "title": "권한 설정",
+                "fields": ["permissions"]
+            },
+            "statistics": {
+                "title": "통계",
+                "fields": ["user_count"]
+            },
+            "timestamps": {
+                "title": "시스템 정보",
+                "fields": ["created_at", "updated_at"]
+            }
+        },
+        "actions": {
+            "edit": {
+                "label": "수정",
+                "route": "admin.auth.roles.edit"
+            },
+            "delete": {
+                "label": "삭제",
+                "route": "admin.auth.roles.delete",
+                "confirm": true
+            },
+            "back": {
+                "label": "목록으로",
+                "route": "admin.auth.roles"
+            }
+        },
+        "customActions": {
+            "toggleActive": {
+                "label": "활성화 토글",
+                "method": "hookCustomToggleActive",
+                "icon": "toggle",
+                "confirm": false
+            },
+            "cloneRole": {
+                "label": "역할 복사",
+                "method": "hookCustomCloneRole",
+                "icon": "copy",
+                "confirm": true,
+                "confirmMessage": "이 역할을 복사하시겠습니까?"
+            }
+        }
+    },
+    
+    "delete": {
+        "title": "역할 삭제",
+        "confirmation": {
+            "title": "역할 삭제 확인",
+            "message": "이 역할을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+            "type": "danger"
+        },
+        "softDelete": false,
+        "checkRelations": true,
+        "protectedRoles": ["super-admin", "admin", "user"]
+    },
+    
+    "messages": {
+        "created": "역할이 성공적으로 생성되었습니다.",
+        "updated": "역할이 성공적으로 수정되었습니다.",
+        "deleted": "역할이 성공적으로 삭제되었습니다.",
+        "restored": "역할이 성공적으로 복원되었습니다.",
+        "notFound": "역할을 찾을 수 없습니다.",
+        "cannotDelete": "이 역할은 삭제할 수 없습니다.",
+        "duplicateSlug": "이미 사용중인 슬러그입니다.",
+        "invalidJson": "올바른 JSON 형식이 아닙니다."
+    }
+}

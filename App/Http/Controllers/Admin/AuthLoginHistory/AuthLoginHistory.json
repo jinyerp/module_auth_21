@@ -1,0 +1,276 @@
+{
+    "title": "로그인 기록",
+    "description": "사용자 로그인 이력 관리",
+    "controllerClass": "\\Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthLoginHistory\\AuthLoginHistory",
+    "model": "\\Jiny\\Auth\\App\\Models\\LoginHistory",
+    "readonly": true,
+    
+    "routes": {
+        "prefix": "admin/auth/login-history",
+        "name": "admin.auth.login-history",
+        "middleware": ["auth", "admin"]
+    },
+    
+    "table": {
+        "name": "login_histories",
+        "primaryKey": "id",
+        "timestamps": true
+    },
+    
+    "index": {
+        "perPage": 50,
+        "perPageOptions": [25, 50, 100, 200],
+        "defaultSort": {
+            "field": "login_at",
+            "direction": "desc"
+        },
+        "columns": {
+            "id": {
+                "label": "ID",
+                "visible": true,
+                "sortable": true,
+                "width": "60px"
+            },
+            "account_id": {
+                "label": "계정",
+                "visible": true,
+                "sortable": true,
+                "linkRoute": "admin.auth.accounts.show"
+            },
+            "login_at": {
+                "label": "로그인 시간",
+                "visible": true,
+                "sortable": true,
+                "format": "datetime"
+            },
+            "logout_at": {
+                "label": "로그아웃 시간",
+                "visible": true,
+                "sortable": true,
+                "format": "datetime"
+            },
+            "session_duration": {
+                "label": "세션 시간",
+                "visible": true,
+                "sortable": false
+            },
+            "ip_address": {
+                "label": "IP 주소",
+                "visible": true,
+                "sortable": true
+            },
+            "location": {
+                "label": "위치",
+                "visible": true,
+                "sortable": true
+            },
+            "device_type": {
+                "label": "디바이스",
+                "visible": true,
+                "sortable": true
+            },
+            "browser": {
+                "label": "브라우저",
+                "visible": false,
+                "sortable": false
+            },
+            "status": {
+                "label": "상태",
+                "visible": true,
+                "sortable": true,
+                "badge": true
+            },
+            "failed_attempts": {
+                "label": "실패 횟수",
+                "visible": false,
+                "sortable": true
+            }
+        },
+        "search": {
+            "enabled": true,
+            "fields": ["ip_address", "location", "browser"],
+            "placeholder": "IP 주소, 위치, 브라우저 검색..."
+        },
+        "filters": {
+            "status": {
+                "label": "상태",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "success": "성공",
+                    "failed": "실패",
+                    "blocked": "차단됨",
+                    "expired": "만료",
+                    "logout": "로그아웃"
+                }
+            },
+            "device_type": {
+                "label": "디바이스",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "desktop": "데스크톱",
+                    "mobile": "모바일",
+                    "tablet": "태블릿"
+                }
+            },
+            "date_range": {
+                "label": "기간",
+                "type": "daterange",
+                "default": {
+                    "start": "-30 days",
+                    "end": "today"
+                }
+            },
+            "suspicious_only": {
+                "label": "의심스러운 활동만",
+                "type": "checkbox",
+                "default": false
+            },
+            "active_only": {
+                "label": "활성 세션만",
+                "type": "checkbox",
+                "default": false
+            }
+        },
+        "actions": {
+            "view": {
+                "enabled": true,
+                "label": "상세",
+                "icon": "eye",
+                "class": "text-blue-600 hover:text-blue-900"
+            },
+            "terminate": {
+                "enabled": true,
+                "label": "세션 종료",
+                "icon": "x-circle",
+                "class": "text-red-600 hover:text-red-900",
+                "condition": "!logout_at",
+                "confirmation": {
+                    "title": "세션 종료",
+                    "message": "이 세션을 종료하시겠습니까?",
+                    "type": "warning"
+                }
+            },
+            "delete": {
+                "enabled": false
+            }
+        },
+        "bulkActions": {
+            "enabled": false
+        }
+    },
+    
+    "show": {
+        "layout": "detail",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["id", "account_id", "status"]
+            },
+            "time": {
+                "title": "시간 정보",
+                "fields": ["login_at", "logout_at", "session_duration"]
+            },
+            "access": {
+                "title": "접속 정보",
+                "fields": ["ip_address", "location", "device_type", "browser"]
+            },
+            "security": {
+                "title": "보안 정보",
+                "fields": ["failed_attempts", "is_blocked", "session_id"]
+            }
+        },
+        "actions": {
+            "terminate": {
+                "enabled": true,
+                "label": "세션 종료",
+                "condition": "!logout_at",
+                "class": "bg-red-600 hover:bg-red-700 text-white"
+            },
+            "back": {
+                "enabled": true,
+                "label": "목록으로",
+                "route": "admin.auth.login-history",
+                "class": "bg-gray-600 hover:bg-gray-700 text-white"
+            }
+        }
+    },
+    
+    "features": {
+        "create": false,
+        "edit": false,
+        "delete": false,
+        "export": true,
+        "import": false,
+        "bulkDelete": false,
+        "restore": false,
+        "audit": true,
+        "versioning": false
+    },
+    
+    "export": {
+        "formats": ["csv", "excel", "pdf"],
+        "fields": [
+            "id",
+            "account_id",
+            "login_at",
+            "logout_at",
+            "ip_address",
+            "location",
+            "device_type",
+            "browser",
+            "status",
+            "failed_attempts"
+        ]
+    },
+    
+    "permissions": {
+        "view": "view-login-history",
+        "delete": "delete-login-history",
+        "export": "export-login-history",
+        "terminate": "terminate-session"
+    },
+    
+    "messages": {
+        "no_data": "로그인 기록이 없습니다.",
+        "session_terminated": "세션이 종료되었습니다.",
+        "delete_restricted": "로그인 기록은 보안상 삭제할 수 없습니다.",
+        "export_success": "로그인 기록이 내보내기되었습니다.",
+        "suspicious_activity": "의심스러운 활동이 감지되었습니다."
+    },
+    
+    "statistics": {
+        "enabled": true,
+        "widgets": [
+            {
+                "type": "counter",
+                "label": "오늘 로그인",
+                "field": "today_logins",
+                "icon": "login",
+                "color": "blue"
+            },
+            {
+                "type": "counter",
+                "label": "활성 세션",
+                "field": "active_sessions",
+                "icon": "users",
+                "color": "green"
+            },
+            {
+                "type": "counter",
+                "label": "실패한 시도",
+                "field": "failed_today",
+                "icon": "x-circle",
+                "color": "red"
+            },
+            {
+                "type": "counter",
+                "label": "의심스러운 활동",
+                "field": "suspicious_activities",
+                "icon": "alert-triangle",
+                "color": "yellow"
+            }
+        ]
+    }
+}

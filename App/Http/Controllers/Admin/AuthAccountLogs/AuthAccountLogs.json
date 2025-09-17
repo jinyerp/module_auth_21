@@ -1,0 +1,323 @@
+{
+    "controllerClass": "\\Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthAccountLogs\\AuthAccountLogs",
+    "title": "회원 활동 로그",
+    "subtitle": "회원 활동 이력 조회",
+    "description": "Account activity logging system for tracking user actions and changes.",
+    "readonly": true,
+    "route": {
+        "name": "admin.auth.account.logs",
+        "prefix": "admin.auth.account.logs",
+        "actions": {
+            "index": "index",
+            "show": "show",
+            "destroy": "destroy"
+        }
+    },
+    "table": {
+        "name": "account_logs",
+        "model": "\\Jiny\\Auth\\App\\Models\\AccountLog",
+        "primaryKey": "id",
+        "timestamps": true,
+        "softDeletes": false,
+        "where": {
+            "default": [],
+            "conditions": []
+        },
+        "casts": {
+            "old_values": "array",
+            "new_values": "array",
+            "meta": "array",
+            "performed_at": "datetime"
+        }
+    },
+    "template": {
+        "layout": "jiny-admin::layouts.admin",
+        "index": "jiny-admin::template.index",
+        "show": "jiny-admin::template.show"
+    },
+    "index": {
+        "tableLayoutPath": "jiny-admin::template.livewire.admin-table",
+        "tablePath": "jiny-auth::admin.auth_account_logs.table",
+        "searchLayoutPath": "jiny-admin::template.livewire.admin-search",
+        "searchFormPath": "jiny-auth::admin.auth_account_logs.search",
+        "searchable": [
+            "action",
+            "description",
+            "ip_address"
+        ],
+        "sortable": [
+            "id",
+            "account_id",
+            "action",
+            "status",
+            "performed_at",
+            "created_at"
+        ],
+        "filterable": [
+            "action",
+            "status"
+        ],
+        "heading": {
+            "title": "회원 활동 로그",
+            "description": "회원별 활동 이력을 조회하고 관리합니다"
+        },
+        "features": {
+            "enableCreate": false,
+            "enableDelete": true,
+            "enableEdit": false,
+            "enableSearch": true,
+            "enableSort": true,
+            "enablePagination": true,
+            "enableBulkActions": false,
+            "enableExport": true,
+            "enableImport": false,
+            "enableStatusToggle": false,
+            "enableSettingsDrawer": true
+        },
+        "pagination": {
+            "perPage": 50,
+            "perPageOptions": [20, 50, 100, 200]
+        },
+        "sorting": {
+            "default": "performed_at",
+            "direction": "desc"
+        },
+        "search": {
+            "placeholder": "액션, 설명, IP 주소로 검색...",
+            "debounce": 300
+        },
+        "filters": {
+            "action": {
+                "label": "활동 유형",
+                "options": {
+                    "": "전체 활동",
+                    "login": "로그인",
+                    "logout": "로그아웃",
+                    "login_failed": "로그인 실패",
+                    "password_reset": "비밀번호 재설정",
+                    "email_change": "이메일 변경",
+                    "profile_update": "프로필 수정",
+                    "account_created": "계정 생성",
+                    "account_deleted": "계정 삭제",
+                    "permission_changed": "권한 변경"
+                }
+            },
+            "status": {
+                "label": "상태",
+                "options": {
+                    "": "전체",
+                    "success": "성공",
+                    "failed": "실패",
+                    "pending": "대기"
+                }
+            },
+            "account_id": {
+                "label": "회원 ID",
+                "type": "number",
+                "placeholder": "회원 ID 입력"
+            }
+        },
+        "table": {
+            "columns": {
+                "checkbox": {
+                    "visible": false,
+                    "width": "50px"
+                },
+                "id": {
+                    "label": "ID",
+                    "visible": true,
+                    "sortable": true,
+                    "width": "80px"
+                },
+                "account_id": {
+                    "label": "회원ID",
+                    "visible": true,
+                    "sortable": true,
+                    "width": "100px",
+                    "linkRoute": "admin.auth.accounts.show",
+                    "linkParam": "account_id"
+                },
+                "action": {
+                    "label": "활동",
+                    "visible": true,
+                    "sortable": true,
+                    "badge": true,
+                    "badgeColors": {
+                        "login": "green",
+                        "logout": "blue",
+                        "login_failed": "red",
+                        "password_reset": "yellow",
+                        "email_change": "purple",
+                        "profile_update": "gray",
+                        "account_created": "teal",
+                        "account_deleted": "red",
+                        "permission_changed": "orange"
+                    }
+                },
+                "description": {
+                    "label": "설명",
+                    "visible": true,
+                    "truncate": 50,
+                    "responsive": "md"
+                },
+                "status": {
+                    "label": "상태",
+                    "visible": true,
+                    "sortable": true,
+                    "badge": true,
+                    "badgeColors": {
+                        "success": "green",
+                        "failed": "red",
+                        "pending": "yellow"
+                    },
+                    "width": "100px"
+                },
+                "ip_address": {
+                    "label": "IP 주소",
+                    "visible": true,
+                    "responsive": "lg",
+                    "width": "150px"
+                },
+                "user_agent": {
+                    "label": "브라우저",
+                    "visible": false,
+                    "responsive": "xl",
+                    "truncate": 40
+                },
+                "performed_at": {
+                    "label": "발생시간",
+                    "visible": true,
+                    "sortable": true,
+                    "format": "Y-m-d H:i:s",
+                    "width": "180px"
+                },
+                "actions": {
+                    "label": "작업",
+                    "visible": true,
+                    "width": "100px"
+                }
+            }
+        }
+    },
+    "show": {
+        "heading": {
+            "title": "로그 상세 정보",
+            "description": "활동 로그의 상세 내용을 확인합니다"
+        },
+        "enableEdit": false,
+        "enableDelete": true,
+        "enableCreate": false,
+        "enableListButton": true,
+        "enableSettingsDrawer": true,
+        "showLayoutPath": "jiny-admin::template.livewire.admin-show",
+        "showPath": "jiny-auth::admin.auth_account_logs.show",
+        "display": {
+            "datetimeFormat": "Y-m-d H:i:s",
+            "booleanLabels": {
+                "true": "예",
+                "false": "아니오"
+            }
+        },
+        "fields": {
+            "id": {
+                "label": "로그 ID",
+                "visible": true
+            },
+            "account_id": {
+                "label": "회원 ID",
+                "visible": true,
+                "link": true,
+                "linkRoute": "admin.auth.accounts.show"
+            },
+            "action": {
+                "label": "활동",
+                "visible": true,
+                "badge": true
+            },
+            "description": {
+                "label": "설명",
+                "visible": true
+            },
+            "status": {
+                "label": "상태",
+                "visible": true,
+                "badge": true
+            },
+            "ip_address": {
+                "label": "IP 주소",
+                "visible": true
+            },
+            "location": {
+                "label": "위치",
+                "visible": true,
+                "computed": true
+            },
+            "user_agent": {
+                "label": "User Agent",
+                "visible": true
+            },
+            "browser_info": {
+                "label": "브라우저 정보",
+                "visible": true,
+                "computed": true
+            },
+            "old_values": {
+                "label": "이전 값",
+                "visible": true,
+                "type": "json"
+            },
+            "new_values": {
+                "label": "변경된 값",
+                "visible": true,
+                "type": "json"
+            },
+            "meta": {
+                "label": "메타 데이터",
+                "visible": true,
+                "type": "json"
+            },
+            "error_message": {
+                "label": "오류 메시지",
+                "visible": true,
+                "showIf": "status:failed"
+            },
+            "performed_at": {
+                "label": "발생 시간",
+                "visible": true,
+                "format": "Y-m-d H:i:s"
+            },
+            "created_at": {
+                "label": "생성 시간",
+                "visible": true,
+                "format": "Y-m-d H:i:s"
+            },
+            "is_suspicious": {
+                "label": "의심스러운 활동",
+                "visible": true,
+                "computed": true,
+                "badge": true,
+                "badgeColors": {
+                    "true": "red",
+                    "false": "green"
+                }
+            }
+        }
+    },
+    "destroy": {
+        "enableSoftDelete": false,
+        "enableTransaction": true,
+        "requireConfirmation": true,
+        "confirmation": {
+            "message": "이 로그 항목을 삭제하시겠습니까? 삭제된 로그는 복구할 수 없습니다."
+        },
+        "messages": {
+            "success": "로그가 성공적으로 삭제되었습니다.",
+            "error": "로그 삭제 중 오류가 발생했습니다: %s",
+            "confirmRequired": "삭제 확인이 필요합니다."
+        },
+        "restrictions": {
+            "protectedActions": ["account_created", "account_deleted", "permission_changed", "security_breach"],
+            "minAgeInDays": 30
+        }
+    }
+}

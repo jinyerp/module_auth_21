@@ -1,0 +1,364 @@
+{
+    "title": "회원 등급 관리",
+    "description": "회원 등급 및 혜택 관리",
+    "controllerClass": "Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthGrades\\AuthGrades",
+    "model": "Jiny\\Auth\\App\\Models\\Grade",
+    "table": {
+        "name": "accounts_grades",
+        "primaryKey": "id",
+        "timestamps": true,
+        "softDeletes": false
+    },
+    "index": {
+        "perPage": 20,
+        "perPageOptions": [10, 20, 50, 100],
+        "sortField": "level",
+        "sortDirection": "asc",
+        "searchable": ["name", "code", "description"],
+        "sortable": ["level", "name", "code", "point_rate", "discount_rate", "created_at"],
+        "columns": {
+            "level": {
+                "label": "레벨",
+                "width": "80px",
+                "align": "center",
+                "sortable": true
+            },
+            "name": {
+                "label": "등급명",
+                "sortable": true,
+                "searchable": true,
+                "linkRoute": "admin.auth.grades.show"
+            },
+            "code": {
+                "label": "등급 코드",
+                "sortable": true,
+                "searchable": true
+            },
+            "point_rate": {
+                "label": "포인트 적립률",
+                "sortable": true,
+                "format": "percentage",
+                "align": "right"
+            },
+            "discount_rate": {
+                "label": "할인율(%)",
+                "sortable": true,
+                "align": "right"
+            },
+            "min_purchase": {
+                "label": "최소 구매금액",
+                "sortable": true,
+                "format": "currency",
+                "align": "right"
+            },
+            "user_count": {
+                "label": "회원 수",
+                "align": "center",
+                "virtual": true
+            },
+            "is_active": {
+                "label": "상태",
+                "sortable": true,
+                "type": "boolean",
+                "align": "center",
+                "trueLabel": "활성",
+                "falseLabel": "비활성",
+                "trueColor": "green",
+                "falseColor": "gray"
+            },
+            "created_at": {
+                "label": "생성일",
+                "sortable": true,
+                "format": "date",
+                "dateFormat": "Y-m-d"
+            }
+        },
+        "actions": {
+            "create": {
+                "enabled": true,
+                "label": "새 등급 추가",
+                "route": "admin.auth.grades.create",
+                "permission": "grades.create"
+            },
+            "view": {
+                "enabled": true,
+                "route": "admin.auth.grades.show",
+                "permission": "grades.view"
+            },
+            "edit": {
+                "enabled": true,
+                "route": "admin.auth.grades.edit",
+                "permission": "grades.edit"
+            },
+            "delete": {
+                "enabled": true,
+                "route": "admin.auth.grades.delete",
+                "permission": "grades.delete",
+                "confirm": true,
+                "confirmMessage": "이 등급을 삭제하시겠습니까?"
+            }
+        },
+        "filters": {
+            "is_active": {
+                "label": "상태",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "1": "활성",
+                    "0": "비활성"
+                }
+            },
+            "level": {
+                "label": "레벨 범위",
+                "type": "range",
+                "min": 1,
+                "max": 10
+            }
+        }
+    },
+    "fields": {
+        "name": {
+            "label": "등급명",
+            "type": "text",
+            "required": true,
+            "maxLength": 50,
+            "placeholder": "예: 골드 회원",
+            "validation": "required|string|max:50|unique:accounts_grades,name",
+            "help": "회원에게 표시될 등급 이름"
+        },
+        "code": {
+            "label": "등급 코드",
+            "type": "text",
+            "required": true,
+            "maxLength": 20,
+            "placeholder": "예: GOLD",
+            "validation": "required|string|max:20|unique:accounts_grades,code",
+            "help": "시스템에서 사용할 고유 코드 (영문 대문자 권장)"
+        },
+        "level": {
+            "label": "레벨",
+            "type": "number",
+            "required": true,
+            "min": 1,
+            "max": 99,
+            "validation": "required|integer|min:1|max:99|unique:accounts_grades,level",
+            "help": "등급의 레벨 (높을수록 상위 등급)"
+        },
+        "description": {
+            "label": "설명",
+            "type": "textarea",
+            "rows": 3,
+            "maxLength": 500,
+            "placeholder": "등급에 대한 설명을 입력하세요",
+            "validation": "nullable|string|max:500"
+        },
+        "benefits": {
+            "label": "혜택",
+            "type": "json",
+            "default": {},
+            "help": "JSON 형식으로 혜택 정보 입력",
+            "validation": "nullable|json",
+            "fields": {
+                "free_shipping": {
+                    "label": "무료 배송",
+                    "type": "boolean"
+                },
+                "birthday_coupon": {
+                    "label": "생일 쿠폰",
+                    "type": "boolean"
+                },
+                "exclusive_sale": {
+                    "label": "전용 세일",
+                    "type": "boolean"
+                },
+                "priority_support": {
+                    "label": "우선 고객지원",
+                    "type": "boolean"
+                },
+                "early_access": {
+                    "label": "신제품 우선 구매",
+                    "type": "boolean"
+                }
+            }
+        },
+        "point_rate": {
+            "label": "포인트 적립률",
+            "type": "number",
+            "step": 0.01,
+            "min": 0,
+            "max": 1,
+            "default": 0.01,
+            "validation": "required|numeric|min:0|max:1",
+            "help": "구매 금액 대비 포인트 적립 비율 (0.01 = 1%)",
+            "suffix": "%",
+            "displayMultiplier": 100
+        },
+        "discount_rate": {
+            "label": "할인율(%)",
+            "type": "number",
+            "min": 0,
+            "max": 100,
+            "default": 0,
+            "validation": "required|numeric|min:0|max:100",
+            "help": "기본 할인율 (%)",
+            "suffix": "%"
+        },
+        "min_purchase": {
+            "label": "최소 구매금액",
+            "type": "number",
+            "min": 0,
+            "default": 0,
+            "validation": "required|numeric|min:0",
+            "help": "이 등급 승급을 위한 최소 누적 구매금액",
+            "prefix": "₩",
+            "format": "currency"
+        },
+        "color": {
+            "label": "등급 색상",
+            "type": "color",
+            "default": "#6B7280",
+            "validation": "nullable|string|max:7",
+            "help": "등급을 나타낼 색상 선택"
+        },
+        "icon": {
+            "label": "아이콘",
+            "type": "text",
+            "maxLength": 50,
+            "placeholder": "예: star, crown, diamond",
+            "validation": "nullable|string|max:50",
+            "help": "등급을 나타낼 아이콘 이름 (Heroicons 사용)"
+        },
+        "is_active": {
+            "label": "활성화",
+            "type": "boolean",
+            "default": true,
+            "validation": "required|boolean",
+            "help": "이 등급의 사용 여부"
+        }
+    },
+    "create": {
+        "title": "새 등급 생성",
+        "submitButton": "등급 생성",
+        "cancelButton": "취소",
+        "successMessage": "회원 등급이 성공적으로 생성되었습니다.",
+        "layout": "two-column",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["name", "code", "level", "description"]
+            },
+            "benefits": {
+                "title": "혜택 설정",
+                "fields": ["point_rate", "discount_rate", "min_purchase", "benefits"]
+            },
+            "visual": {
+                "title": "시각적 설정",
+                "fields": ["color", "icon"]
+            },
+            "status": {
+                "title": "상태",
+                "fields": ["is_active"]
+            }
+        }
+    },
+    "edit": {
+        "title": "등급 수정",
+        "submitButton": "변경 저장",
+        "cancelButton": "취소",
+        "successMessage": "회원 등급이 성공적으로 수정되었습니다.",
+        "layout": "two-column",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["name", "code", "level", "description"]
+            },
+            "benefits": {
+                "title": "혜택 설정",
+                "fields": ["point_rate", "discount_rate", "min_purchase", "benefits"]
+            },
+            "visual": {
+                "title": "시각적 설정",
+                "fields": ["color", "icon"]
+            },
+            "status": {
+                "title": "상태",
+                "fields": ["is_active"]
+            }
+        }
+    },
+    "show": {
+        "title": "등급 상세 정보",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["name", "code", "level", "is_active"]
+            },
+            "benefits": {
+                "title": "혜택 정보",
+                "fields": ["point_rate", "discount_rate", "min_purchase", "benefits"]
+            },
+            "visual": {
+                "title": "시각적 설정",
+                "fields": ["color", "icon"]
+            },
+            "statistics": {
+                "title": "통계",
+                "type": "custom",
+                "component": "grade-statistics"
+            },
+            "users": {
+                "title": "회원 목록",
+                "type": "relation",
+                "relation": "users",
+                "limit": 10
+            }
+        }
+    },
+    "delete": {
+        "title": "등급 삭제",
+        "confirmMessage": "정말로 이 등급을 삭제하시겠습니까?",
+        "warningMessage": "이 등급을 사용중인 회원들은 기본 등급으로 변경됩니다.",
+        "successMessage": "회원 등급이 성공적으로 삭제되었습니다.",
+        "softDelete": false
+    },
+    "validation": {
+        "rules": {
+            "name": "required|string|max:50",
+            "code": "required|string|max:20",
+            "level": "required|integer|min:1|max:99",
+            "description": "nullable|string|max:500",
+            "benefits": "nullable|json",
+            "point_rate": "required|numeric|min:0|max:1",
+            "discount_rate": "required|numeric|min:0|max:100",
+            "min_purchase": "required|numeric|min:0",
+            "color": "nullable|string|max:7",
+            "icon": "nullable|string|max:50",
+            "is_active": "required|boolean"
+        },
+        "messages": {
+            "name.required": "등급명은 필수 입력 항목입니다.",
+            "name.unique": "이미 사용중인 등급명입니다.",
+            "code.required": "등급 코드는 필수 입력 항목입니다.",
+            "code.unique": "이미 사용중인 등급 코드입니다.",
+            "level.required": "레벨은 필수 입력 항목입니다.",
+            "level.unique": "이미 사용중인 레벨입니다.",
+            "point_rate.min": "포인트 적립률은 0 이상이어야 합니다.",
+            "point_rate.max": "포인트 적립률은 1(100%) 이하여야 합니다.",
+            "discount_rate.min": "할인율은 0% 이상이어야 합니다.",
+            "discount_rate.max": "할인율은 100% 이하여야 합니다."
+        }
+    },
+    "permissions": {
+        "view": "grades.view",
+        "create": "grades.create",
+        "edit": "grades.edit",
+        "delete": "grades.delete"
+    },
+    "routes": {
+        "index": "admin.auth.grades",
+        "create": "admin.auth.grades.create",
+        "show": "admin.auth.grades.show",
+        "edit": "admin.auth.grades.edit",
+        "delete": "admin.auth.grades.delete"
+    }
+}

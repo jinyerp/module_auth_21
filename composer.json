@@ -1,0 +1,69 @@
+{
+    "name": "jinyerp/auth",
+    "description": "Laravel Authentication and User Management System - A comprehensive auth package for Laravel 12 applications",
+    "type": "library",
+    "keywords": [
+        "jiny",
+        "auth",
+        "laravel",
+        "authentication",
+        "user-management",
+        "login",
+        "registration",
+        "password-reset",
+        "2fa"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "JinyPHP Team",
+            "email": "infohojin@gmail.com",
+            "homepage": "https://github.com/jinyphp"
+        }
+    ],
+    "homepage": "https://github.com/jinyphp/auth",
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^11.0|^12.0",
+        "livewire/livewire": "^3.0",
+        "laravel/socialite": "^5.5",
+        "socialiteproviders/kakao": "^4.2",
+        "socialiteproviders/naver": "^4.1",
+        "laravel/sanctum": "^4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0|^11.0",
+        "laravel/pint": "^1.0",
+        "mockery/mockery": "^1.6",
+        "fakerphp/faker": "^1.23"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jiny\\Auth\\": "/"
+        },
+        "files": [
+            "Helpers/Helper.php",
+            "Helpers/auth.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jiny\\Auth\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Jiny\\Auth\\JinyAuthServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "format": "vendor/bin/pint",
+        "post-autoload-dump": [
+            "@php artisan package:discover --ansi"
+        ]
+    }
+}

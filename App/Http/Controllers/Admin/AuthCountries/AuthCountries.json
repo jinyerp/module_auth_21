@@ -1,0 +1,455 @@
+{
+    "title": "국가 관리",
+    "description": "지역 및 국가 코드 관리",
+    "controllerClass": "\\Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthCountries\\AuthCountries",
+    "model": "\\Jiny\\Auth\\App\\Models\\Country",
+    "table": {
+        "name": "countries",
+        "primaryKey": "id",
+        "timestamps": true
+    },
+    "index": {
+        "perPage": 30,
+        "perPageOptions": [10, 20, 30, 50, 100],
+        "searchable": ["name", "native_name", "code", "code3", "phone_code", "capital"],
+        "sortable": ["name", "code", "code3", "display_order", "is_active", "created_at"],
+        "defaultSort": {
+            "field": "display_order",
+            "direction": "asc"
+        },
+        "columns": {
+            "flag_emoji": {
+                "label": "국기",
+                "width": "50px",
+                "align": "center"
+            },
+            "code": {
+                "label": "ISO2",
+                "width": "80px",
+                "badge": true
+            },
+            "code3": {
+                "label": "ISO3",
+                "width": "80px",
+                "visible": false
+            },
+            "name": {
+                "label": "국가명",
+                "sortable": true,
+                "searchable": true,
+                "link": true
+            },
+            "native_name": {
+                "label": "현지명",
+                "visible": false
+            },
+            "capital": {
+                "label": "수도",
+                "searchable": true
+            },
+            "region": {
+                "label": "대륙",
+                "badge": true,
+                "filterable": true
+            },
+            "currency_code": {
+                "label": "통화",
+                "width": "80px"
+            },
+            "phone_code": {
+                "label": "국가번호",
+                "width": "100px",
+                "format": "+{value}"
+            },
+            "languages": {
+                "label": "언어",
+                "visible": false,
+                "format": "array"
+            },
+            "display_order": {
+                "label": "순서",
+                "width": "80px",
+                "sortable": true,
+                "editable": true
+            },
+            "is_active": {
+                "label": "활성화",
+                "width": "100px",
+                "boolean": true,
+                "sortable": true,
+                "editable": true
+            },
+            "user_count": {
+                "label": "사용자 수",
+                "width": "100px",
+                "align": "right",
+                "computed": true
+            }
+        },
+        "filters": {
+            "region": {
+                "label": "대륙",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "Africa": "Africa",
+                    "Americas": "Americas",
+                    "Asia": "Asia",
+                    "Europe": "Europe",
+                    "Oceania": "Oceania",
+                    "Antarctic": "Antarctic"
+                }
+            },
+            "is_active": {
+                "label": "상태",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "1": "활성",
+                    "0": "비활성"
+                }
+            },
+            "has_users": {
+                "label": "사용자",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "yes": "사용자 있음",
+                    "no": "사용자 없음"
+                }
+            }
+        },
+        "actions": {
+            "view": {
+                "enabled": true,
+                "icon": "eye",
+                "tooltip": "상세보기"
+            },
+            "edit": {
+                "enabled": true,
+                "icon": "pencil",
+                "tooltip": "수정"
+            },
+            "delete": {
+                "enabled": true,
+                "icon": "trash",
+                "tooltip": "삭제",
+                "confirmation": true
+            }
+        },
+        "bulkActions": {
+            "activate": {
+                "label": "선택 항목 활성화",
+                "icon": "check",
+                "confirmation": "선택한 국가를 활성화하시겠습니까?"
+            },
+            "deactivate": {
+                "label": "선택 항목 비활성화",
+                "icon": "x",
+                "confirmation": "선택한 국가를 비활성화하시겠습니까?"
+            },
+            "delete": {
+                "label": "선택 항목 삭제",
+                "icon": "trash",
+                "confirmation": "선택한 국가를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+                "danger": true
+            },
+            "export": {
+                "label": "CSV 내보내기",
+                "icon": "download"
+            }
+        }
+    },
+    "create": {
+        "title": "새 국가 추가",
+        "layout": "two-column",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["code", "code3", "numeric_code", "name", "native_name"]
+            },
+            "geographic": {
+                "title": "지리 정보",
+                "fields": ["capital", "region", "subregion", "latitude", "longitude"]
+            },
+            "economic": {
+                "title": "경제 정보",
+                "fields": ["currency_code", "currency_name", "currency_symbol"]
+            },
+            "communication": {
+                "title": "통신 정보",
+                "fields": ["phone_code", "languages", "timezone", "timezones"]
+            },
+            "display": {
+                "title": "표시 설정",
+                "fields": ["flag_emoji", "flag_svg", "display_order", "is_active"]
+            }
+        }
+    },
+    "edit": {
+        "title": "국가 정보 수정",
+        "layout": "two-column",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["code", "code3", "numeric_code", "name", "native_name"]
+            },
+            "geographic": {
+                "title": "지리 정보",
+                "fields": ["capital", "region", "subregion", "latitude", "longitude"]
+            },
+            "economic": {
+                "title": "경제 정보",
+                "fields": ["currency_code", "currency_name", "currency_symbol"]
+            },
+            "communication": {
+                "title": "통신 정보",
+                "fields": ["phone_code", "languages", "timezone", "timezones"]
+            },
+            "display": {
+                "title": "표시 설정",
+                "fields": ["flag_emoji", "flag_svg", "display_order", "is_active"]
+            }
+        }
+    },
+    "show": {
+        "title": "국가 상세 정보",
+        "layout": "tabbed",
+        "tabs": {
+            "overview": {
+                "title": "개요",
+                "sections": ["basic_info", "geographic_info", "economic_info", "cultural_info"]
+            },
+            "users": {
+                "title": "사용자",
+                "component": "country-users"
+            },
+            "statistics": {
+                "title": "통계",
+                "component": "country-statistics"
+            },
+            "activity": {
+                "title": "활동 로그",
+                "component": "activity-log"
+            }
+        }
+    },
+    "delete": {
+        "title": "국가 삭제",
+        "confirmation": {
+            "title": "국가를 삭제하시겠습니까?",
+            "message": "이 작업은 되돌릴 수 없습니다. 사용자가 있는 국가는 삭제할 수 없습니다.",
+            "type": "danger"
+        },
+        "softDelete": false,
+        "checkRelations": ["accounts"]
+    },
+    "fields": {
+        "code": {
+            "label": "ISO2 코드",
+            "type": "text",
+            "required": true,
+            "maxlength": 2,
+            "uppercase": true,
+            "placeholder": "KR",
+            "hint": "2자리 ISO 3166-1 alpha-2 코드"
+        },
+        "code3": {
+            "label": "ISO3 코드",
+            "type": "text",
+            "maxlength": 3,
+            "uppercase": true,
+            "placeholder": "KOR",
+            "hint": "3자리 ISO 3166-1 alpha-3 코드"
+        },
+        "numeric_code": {
+            "label": "숫자 코드",
+            "type": "text",
+            "maxlength": 3,
+            "placeholder": "410",
+            "hint": "ISO 3166-1 numeric 코드"
+        },
+        "name": {
+            "label": "국가명",
+            "type": "text",
+            "required": true,
+            "placeholder": "대한민국"
+        },
+        "native_name": {
+            "label": "현지 국가명",
+            "type": "text",
+            "placeholder": "대한민국",
+            "hint": "현지 언어로 표기된 국가명"
+        },
+        "capital": {
+            "label": "수도",
+            "type": "text",
+            "placeholder": "서울"
+        },
+        "region": {
+            "label": "대륙",
+            "type": "select",
+            "options": {
+                "Africa": "Africa",
+                "Americas": "Americas",
+                "Asia": "Asia",
+                "Europe": "Europe",
+                "Oceania": "Oceania",
+                "Antarctic": "Antarctic"
+            }
+        },
+        "subregion": {
+            "label": "하위 지역",
+            "type": "text",
+            "placeholder": "Eastern Asia"
+        },
+        "currency_code": {
+            "label": "통화 코드",
+            "type": "text",
+            "maxlength": 3,
+            "uppercase": true,
+            "placeholder": "KRW",
+            "hint": "ISO 4217 통화 코드"
+        },
+        "currency_name": {
+            "label": "통화명",
+            "type": "text",
+            "placeholder": "원"
+        },
+        "currency_symbol": {
+            "label": "통화 기호",
+            "type": "text",
+            "maxlength": 10,
+            "placeholder": "₩"
+        },
+        "phone_code": {
+            "label": "국가번호",
+            "type": "text",
+            "maxlength": 10,
+            "placeholder": "82",
+            "hint": "+ 없이 숫자만 입력"
+        },
+        "languages": {
+            "label": "언어",
+            "type": "tags",
+            "placeholder": "ko, en",
+            "hint": "ISO 639-1 언어 코드, 쉼표로 구분"
+        },
+        "timezone": {
+            "label": "주요 시간대",
+            "type": "text",
+            "placeholder": "Asia/Seoul"
+        },
+        "timezones": {
+            "label": "모든 시간대",
+            "type": "tags",
+            "placeholder": "Asia/Seoul",
+            "hint": "여러 시간대가 있는 경우 쉼표로 구분"
+        },
+        "flag_emoji": {
+            "label": "국기 이모지",
+            "type": "text",
+            "maxlength": 10,
+            "placeholder": "🇰🇷"
+        },
+        "flag_svg": {
+            "label": "국기 SVG URL",
+            "type": "url",
+            "placeholder": "https://example.com/flags/kr.svg"
+        },
+        "latitude": {
+            "label": "위도",
+            "type": "number",
+            "step": 0.000001,
+            "min": -90,
+            "max": 90
+        },
+        "longitude": {
+            "label": "경도",
+            "type": "number",
+            "step": 0.000001,
+            "min": -180,
+            "max": 180
+        },
+        "display_order": {
+            "label": "표시 순서",
+            "type": "number",
+            "default": 999,
+            "min": 0,
+            "hint": "낮은 숫자가 먼저 표시됩니다 (주요 국가: 1-10)"
+        },
+        "is_active": {
+            "label": "활성화",
+            "type": "checkbox",
+            "default": true,
+            "hint": "비활성화된 국가는 사용자가 선택할 수 없습니다"
+        },
+        "meta": {
+            "label": "추가 정보",
+            "type": "json",
+            "rows": 5,
+            "hint": "JSON 형식의 추가 메타데이터"
+        }
+    },
+    "validation": {
+        "code": "required|string|size:2|unique:countries,code",
+        "code3": "nullable|string|size:3|unique:countries,code3",
+        "numeric_code": "nullable|string|max:3",
+        "name": "required|string|max:255",
+        "native_name": "nullable|string|max:255",
+        "capital": "nullable|string|max:255",
+        "region": "nullable|string|max:100",
+        "subregion": "nullable|string|max:100",
+        "currency_code": "nullable|string|size:3",
+        "currency_name": "nullable|string|max:100",
+        "currency_symbol": "nullable|string|max:10",
+        "phone_code": "nullable|string|max:10",
+        "languages": "nullable|array",
+        "timezone": "nullable|string|max:100",
+        "timezones": "nullable|array",
+        "flag_emoji": "nullable|string|max:10",
+        "flag_svg": "nullable|url|max:500",
+        "latitude": "nullable|numeric|min:-90|max:90",
+        "longitude": "nullable|numeric|min:-180|max:180",
+        "display_order": "required|integer|min:0",
+        "is_active": "required|boolean",
+        "meta": "nullable|json"
+    },
+    "messages": {
+        "created": "국가가 성공적으로 추가되었습니다.",
+        "updated": "국가 정보가 성공적으로 수정되었습니다.",
+        "deleted": "국가가 성공적으로 삭제되었습니다.",
+        "activated": "국가가 활성화되었습니다.",
+        "deactivated": "국가가 비활성화되었습니다.",
+        "imported": "{count}개의 국가를 가져왔습니다.",
+        "exported": "국가 목록을 내보냈습니다.",
+        "error": {
+            "has_users": "이 국가를 사용하는 사용자가 있어 삭제할 수 없습니다.",
+            "protected": "보호된 국가는 삭제할 수 없습니다.",
+            "duplicate_code": "이미 사용 중인 국가 코드입니다.",
+            "invalid_format": "잘못된 데이터 형식입니다."
+        }
+    },
+    "permissions": {
+        "view": "auth.countries.view",
+        "create": "auth.countries.create",
+        "edit": "auth.countries.edit",
+        "delete": "auth.countries.delete",
+        "import": "auth.countries.import",
+        "export": "auth.countries.export"
+    },
+    "routes": {
+        "index": "admin.auth.countries",
+        "create": "admin.auth.countries.create",
+        "store": "admin.auth.countries.store",
+        "show": "admin.auth.countries.show",
+        "edit": "admin.auth.countries.edit",
+        "update": "admin.auth.countries.update",
+        "delete": "admin.auth.countries.delete",
+        "destroy": "admin.auth.countries.destroy",
+        "import": "admin.auth.countries.import",
+        "export": "admin.auth.countries.export",
+        "statistics": "admin.auth.countries.statistics",
+        "bulk_toggle": "admin.auth.countries.bulk_toggle"
+    }
+}

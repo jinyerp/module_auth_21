@@ -1,0 +1,368 @@
+{
+    "title": "휴면계정 관리",
+    "description": "장기 미접속 계정 관리 및 개인정보보호 정책 적용",
+    "controllerClass": "\\Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthDormant\\AuthDormant",
+    
+    "table": {
+        "name": "dormant_accounts",
+        "model": "\\Jiny\\Auth\\App\\Models\\DormantAccount",
+        "primaryKey": "id",
+        "timestamps": true,
+        "softDeletes": false
+    },
+    
+    "index": {
+        "title": "휴면계정 목록",
+        "perPage": 20,
+        "perPageOptions": [10, 20, 50, 100],
+        
+        "columns": {
+            "id": {
+                "label": "ID",
+                "visible": true,
+                "sortable": true,
+                "width": "60px"
+            },
+            "account_email": {
+                "label": "이메일",
+                "visible": true,
+                "sortable": false,
+                "searchable": true,
+                "linkRoute": "admin.auth.dormant.show"
+            },
+            "account_name": {
+                "label": "이름",
+                "visible": true,
+                "sortable": false,
+                "searchable": true
+            },
+            "last_activity_at": {
+                "label": "마지막 활동",
+                "visible": true,
+                "sortable": true,
+                "format": "date:Y-m-d H:i"
+            },
+            "dormant_at": {
+                "label": "휴면 처리일",
+                "visible": true,
+                "sortable": true,
+                "format": "date:Y-m-d"
+            },
+            "dormant_days": {
+                "label": "휴면 기간",
+                "visible": true,
+                "sortable": false,
+                "suffix": "일"
+            },
+            "status": {
+                "label": "상태",
+                "visible": true,
+                "sortable": true,
+                "badge": true,
+                "badgeColors": {
+                    "dormant": "gray",
+                    "notified": "yellow",
+                    "reactivated": "green",
+                    "deleted": "red"
+                },
+                "badgeLabels": {
+                    "dormant": "휴면",
+                    "notified": "알림발송",
+                    "reactivated": "재활성화",
+                    "deleted": "삭제됨"
+                }
+            },
+            "notification_count": {
+                "label": "알림 횟수",
+                "visible": true,
+                "sortable": true,
+                "suffix": "회"
+            },
+            "scheduled_deletion_at": {
+                "label": "삭제 예정일",
+                "visible": true,
+                "sortable": true,
+                "format": "date:Y-m-d",
+                "highlight": "danger"
+            },
+            "deletion_days": {
+                "label": "삭제까지",
+                "visible": true,
+                "sortable": false,
+                "suffix": "일",
+                "highlight": "warning"
+            },
+            "reason": {
+                "label": "사유",
+                "visible": true,
+                "sortable": false
+            }
+        },
+        
+        "search": {
+            "enabled": true,
+            "placeholder": "이메일, 이름, 사유로 검색...",
+            "fields": ["reason"]
+        },
+        
+        "filters": {
+            "status": {
+                "label": "상태",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "dormant": "휴면",
+                    "notified": "알림발송",
+                    "reactivated": "재활성화",
+                    "deleted": "삭제됨"
+                }
+            },
+            "notification_status": {
+                "label": "알림 상태",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "not_sent": "미발송",
+                    "sent": "발송완료"
+                }
+            },
+            "deletion_status": {
+                "label": "삭제 예정",
+                "type": "select",
+                "options": {
+                    "": "전체",
+                    "scheduled": "예정됨",
+                    "imminent": "임박(30일 이내)",
+                    "overdue": "기한 초과"
+                }
+            },
+            "period": {
+                "label": "기간",
+                "type": "daterange"
+            }
+        },
+        
+        "actions": {
+            "view": {
+                "enabled": true,
+                "permission": "admin.auth.dormant.view"
+            },
+            "edit": {
+                "enabled": true,
+                "permission": "admin.auth.dormant.edit"
+            },
+            "activate": {
+                "enabled": true,
+                "label": "활성화",
+                "icon": "check-circle",
+                "color": "green",
+                "permission": "admin.auth.dormant.activate",
+                "confirmation": {
+                    "title": "계정 활성화",
+                    "message": "이 휴면계정을 활성화하시겠습니까?",
+                    "type": "info"
+                }
+            },
+            "delete": {
+                "enabled": true,
+                "permission": "admin.auth.dormant.delete",
+                "confirmation": {
+                    "title": "계정 삭제",
+                    "message": "이 휴면계정을 완전히 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+                    "type": "danger"
+                }
+            }
+        },
+        
+        "bulkActions": {
+            "activate": {
+                "label": "선택 활성화",
+                "icon": "check-circle",
+                "color": "green",
+                "confirmation": true,
+                "route": "admin.auth.dormant.bulk_activate"
+            },
+            "sendNotification": {
+                "label": "알림 발송",
+                "icon": "mail",
+                "color": "blue",
+                "confirmation": true,
+                "route": "admin.auth.dormant.send_notification"
+            },
+            "delete": {
+                "label": "선택 삭제",
+                "icon": "trash",
+                "color": "red",
+                "confirmation": true,
+                "route": "admin.auth.dormant.bulk_delete"
+            }
+        },
+        
+        "sorting": {
+            "default": "dormant_at",
+            "direction": "desc"
+        }
+    },
+    
+    "create": {
+        "title": "수동 휴면 처리",
+        "buttonText": "휴면 처리",
+        "fields": {
+            "account_id": {
+                "type": "select",
+                "label": "계정 선택",
+                "placeholder": "휴면 처리할 계정을 선택하세요",
+                "required": true,
+                "relation": "account",
+                "displayField": "email"
+            },
+            "reason": {
+                "type": "select",
+                "label": "휴면 사유",
+                "required": true,
+                "options": {
+                    "inactivity": "장기 미접속",
+                    "request": "사용자 요청",
+                    "policy": "정책 위반",
+                    "security": "보안 문제",
+                    "other": "기타"
+                }
+            },
+            "reason_detail": {
+                "type": "textarea",
+                "label": "상세 사유",
+                "placeholder": "휴면 처리 상세 사유를 입력하세요",
+                "rows": 3
+            },
+            "scheduled_deletion_at": {
+                "type": "date",
+                "label": "삭제 예정일",
+                "required": true,
+                "default": "+365 days",
+                "min": "today",
+                "hint": "개인정보보호법에 따라 휴면계정은 일정 기간 후 삭제됩니다"
+            },
+            "send_notification": {
+                "type": "checkbox",
+                "label": "즉시 알림 발송",
+                "default": true
+            }
+        }
+    },
+    
+    "edit": {
+        "title": "휴면계정 정보 수정",
+        "fields": {
+            "reason": {
+                "type": "select",
+                "label": "휴면 사유",
+                "required": true,
+                "options": {
+                    "inactivity": "장기 미접속",
+                    "request": "사용자 요청",
+                    "policy": "정책 위반",
+                    "security": "보안 문제",
+                    "other": "기타"
+                }
+            },
+            "scheduled_deletion_at": {
+                "type": "datetime",
+                "label": "삭제 예정일",
+                "required": false,
+                "hint": "비워두면 자동 삭제가 중지됩니다"
+            },
+            "status": {
+                "type": "select",
+                "label": "상태",
+                "options": {
+                    "dormant": "휴면",
+                    "notified": "알림발송",
+                    "reactivated": "재활성화"
+                }
+            },
+            "meta": {
+                "type": "json",
+                "label": "추가 정보",
+                "hint": "JSON 형식의 추가 메타데이터"
+            }
+        }
+    },
+    
+    "show": {
+        "title": "휴면계정 상세 정보",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["id", "account_id", "status", "reason"]
+            },
+            "timeline": {
+                "title": "타임라인",
+                "fields": ["last_activity_at", "dormant_at", "notified_at", "scheduled_deletion_at", "reactivated_at"]
+            },
+            "notification": {
+                "title": "알림 정보",
+                "fields": ["notification_count", "notified_at"]
+            },
+            "account": {
+                "title": "계정 정보",
+                "relation": "account",
+                "fields": ["name", "email", "phone", "status", "last_login_at"]
+            },
+            "backup": {
+                "title": "백업 데이터",
+                "field": "backup_data",
+                "type": "json"
+            },
+            "meta": {
+                "title": "메타데이터",
+                "field": "meta",
+                "type": "json"
+            }
+        }
+    },
+    
+    "validation": {
+        "rules": {
+            "account_id": "required|exists:accounts,id|unique:dormant_accounts,account_id",
+            "reason": "required|string|max:255",
+            "reason_detail": "nullable|string|max:1000",
+            "scheduled_deletion_at": "nullable|date|after:today",
+            "status": "in:dormant,notified,reactivated,deleted"
+        },
+        "messages": {
+            "account_id.unique": "이미 휴면 처리된 계정입니다",
+            "scheduled_deletion_at.after": "삭제 예정일은 오늘 이후여야 합니다"
+        }
+    },
+    
+    "permissions": {
+        "view": "admin.auth.dormant.view",
+        "create": "admin.auth.dormant.create",
+        "edit": "admin.auth.dormant.edit",
+        "delete": "admin.auth.dormant.delete",
+        "activate": "admin.auth.dormant.activate",
+        "statistics": "admin.auth.dormant.statistics",
+        "settings": "admin.auth.dormant.settings"
+    },
+    
+    "routes": {
+        "index": "admin.auth.dormant",
+        "create": "admin.auth.dormant.create",
+        "show": "admin.auth.dormant.show",
+        "edit": "admin.auth.dormant.edit",
+        "activate": "admin.auth.dormant.activate",
+        "statistics": "admin.auth.dormant.statistics",
+        "settings": "admin.auth.dormant.settings"
+    },
+    
+    "messages": {
+        "created": "휴면계정이 등록되었습니다",
+        "updated": "휴면계정 정보가 수정되었습니다",
+        "activated": "계정이 활성화되었습니다",
+        "deleted": "휴면계정이 삭제되었습니다",
+        "notification_sent": "알림이 발송되었습니다",
+        "bulk_activated": "{count}개의 계정이 활성화되었습니다",
+        "bulk_deleted": "{count}개의 계정이 삭제되었습니다",
+        "error": "요청을 처리하는 중 오류가 발생했습니다"
+    }
+}

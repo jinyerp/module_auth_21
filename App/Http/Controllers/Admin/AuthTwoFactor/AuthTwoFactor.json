@@ -1,0 +1,211 @@
+{
+    "title": "2단계 인증 관리",
+    "description": "사용자 2단계 인증 상태 관리",
+    "controllerClass": "Jiny\\Auth\\App\\Http\\Controllers\\Admin\\AuthTwoFactor\\AuthTwoFactor",
+    "model": "Jiny\\Auth\\App\\Models\\TwoFactorAuth",
+    "table": {
+        "name": "two_factor_auths",
+        "primaryKey": "id",
+        "timestamps": true
+    },
+    "index": {
+        "perPage": 20,
+        "perPageOptions": [10, 20, 50, 100],
+        "sorting": {
+            "default": "created_at",
+            "direction": "desc",
+            "sortable": ["account_id", "method", "enabled", "last_used_at", "failed_attempts", "created_at"]
+        },
+        "searchable": ["account_id"],
+        "filters": {
+            "enabled": {
+                "type": "select",
+                "label": "상태",
+                "options": {
+                    "": "전체",
+                    "1": "활성화",
+                    "0": "비활성화"
+                }
+            },
+            "method": {
+                "type": "select",
+                "label": "인증 방법",
+                "options": {
+                    "": "전체",
+                    "totp": "TOTP (앱)",
+                    "sms": "SMS",
+                    "email": "이메일"
+                }
+            }
+        },
+        "columns": {
+            "id": {
+                "label": "ID",
+                "visible": true,
+                "width": "60px"
+            },
+            "user_display": {
+                "label": "사용자",
+                "visible": true,
+                "sortable": false
+            },
+            "method": {
+                "label": "방법",
+                "visible": true,
+                "sortable": true,
+                "badge": true
+            },
+            "enabled": {
+                "label": "상태",
+                "visible": true,
+                "sortable": true,
+                "badge": true
+            },
+            "last_used_at": {
+                "label": "마지막 사용",
+                "visible": true,
+                "sortable": true,
+                "format": "datetime"
+            },
+            "failed_attempts": {
+                "label": "실패 시도",
+                "visible": true,
+                "sortable": true,
+                "badge": true
+            },
+            "created_at": {
+                "label": "생성일",
+                "visible": true,
+                "sortable": true,
+                "format": "date"
+            }
+        },
+        "actions": {
+            "view": {
+                "enabled": true,
+                "route": "admin.auth.two_factor.show",
+                "icon": "eye",
+                "class": "text-blue-600 hover:text-blue-900"
+            },
+            "edit": {
+                "enabled": true,
+                "route": "admin.auth.two_factor.edit",
+                "icon": "pencil",
+                "class": "text-gray-600 hover:text-gray-900"
+            },
+            "disable": {
+                "enabled": true,
+                "route": "admin.auth.two_factor.disable",
+                "icon": "x-circle",
+                "class": "text-yellow-600 hover:text-yellow-900",
+                "label": "비활성화"
+            }
+        },
+        "bulkActions": {
+            "disable": {
+                "enabled": true,
+                "label": "선택 항목 비활성화",
+                "confirmation": "선택한 항목들의 2FA를 비활성화하시겠습니까?",
+                "route": "admin.auth.two_factor.bulk_disable"
+            }
+        }
+    },
+    "fields": {
+        "account_id": {
+            "label": "사용자",
+            "type": "select",
+            "relation": "account",
+            "display": "name",
+            "required": true,
+            "readonly": true
+        },
+        "method": {
+            "label": "인증 방법",
+            "type": "select",
+            "options": {
+                "totp": "TOTP (앱 인증)",
+                "sms": "SMS",
+                "email": "이메일"
+            },
+            "required": true
+        },
+        "secret": {
+            "label": "비밀키",
+            "type": "hidden"
+        },
+        "recovery_codes": {
+            "label": "복구 코드",
+            "type": "json",
+            "hidden": true
+        },
+        "enabled": {
+            "label": "활성화",
+            "type": "boolean",
+            "default": false
+        },
+        "enabled_at": {
+            "label": "활성화 일시",
+            "type": "datetime",
+            "readonly": true
+        },
+        "last_used_at": {
+            "label": "마지막 사용",
+            "type": "datetime",
+            "readonly": true
+        },
+        "failed_attempts": {
+            "label": "실패 횟수",
+            "type": "number",
+            "readonly": true,
+            "default": 0
+        }
+    },
+    "edit": {
+        "title": "2단계 인증 설정 수정",
+        "fields": {
+            "method": {
+                "readonly": false
+            },
+            "enabled": {
+                "readonly": false
+            }
+        }
+    },
+    "show": {
+        "title": "2단계 인증 상세 정보",
+        "sections": {
+            "basic": {
+                "title": "기본 정보",
+                "fields": ["account_id", "method", "enabled", "enabled_at"]
+            },
+            "usage": {
+                "title": "사용 현황",
+                "fields": ["last_used_at", "failed_attempts"]
+            },
+            "security": {
+                "title": "보안 정보",
+                "fields": ["recovery_codes_count"]
+            }
+        }
+    },
+    "routes": {
+        "index": "admin.auth.two_factor",
+        "show": "admin.auth.two_factor.show",
+        "edit": "admin.auth.two_factor.edit",
+        "disable": "admin.auth.two_factor.disable",
+        "reset_codes": "admin.auth.two_factor.reset_codes",
+        "bulk_disable": "admin.auth.two_factor.bulk_disable"
+    },
+    "permissions": {
+        "view": "admin.two_factor.view",
+        "edit": "admin.two_factor.edit",
+        "disable": "admin.two_factor.disable",
+        "reset_codes": "admin.two_factor.reset_codes"
+    },
+    "messages": {
+        "disabled": "2단계 인증이 비활성화되었습니다.",
+        "updated": "2단계 인증 설정이 수정되었습니다.",
+        "codes_reset": "복구 코드가 재생성되었습니다.",
+        "bulk_disabled": "선택한 항목들의 2FA가 비활성화되었습니다."
+    }
+}
